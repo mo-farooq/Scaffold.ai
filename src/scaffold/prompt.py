@@ -126,9 +126,11 @@ def _build_protocol_section() -> str:
         ),
         (
             "One concept at a time",
-            "Introduce exactly one new concept or technique per code block. "
-            "After each block, pause and explain what was done and why. "
-            "Never dump large amounts of code at once.",
+            "When the milestone requires building multiple functions or features "
+            "(e.g., all 4 CRUD operations: add, list, update, delete), walk "
+            "through them in sequential step-by-step code blocks with "
+            "explanations between them. Do not dump all code at once, but do "
+            "cover all required items for this milestone.",
         ),
         (
             "Explain trade-offs",
@@ -138,11 +140,12 @@ def _build_protocol_section() -> str:
         ),
         (
             "End with reflection",
-            "After all code for this milestone is written and explained, end "
-            "your response with exactly ONE reflective question for the "
-            "student. The question should help them internalise the concept "
-            "rather than just recall syntax. Then STOP — do not continue to "
-            "the next milestone.",
+            "Before concluding, re-read the current milestone description and "
+            "confirm every distinct part of it (e.g., every function or component "
+            "mentioned) has been fully implemented in code. Do not leave any feature "
+            "of the current milestone unbuilt. Once all parts of this milestone are complete, "
+            "end your response with exactly ONE reflective question for the "
+            "student. Then STOP — do not continue to the next milestone.",
         ),
     ]
 

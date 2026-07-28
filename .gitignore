@@ -10,3 +10,7 @@ wheels/
 .env
 .env.*
 
+# Raw log dumps
+*_raw.txt
+
+

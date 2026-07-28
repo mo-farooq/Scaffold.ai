@@ -37,7 +37,7 @@ def main() -> None:
     ctx = MilestoneContext(
         project_description=TODO_PROJECT,
         milestones=TODO_MILESTONES,
-        current_index=0,  # first milestone: data model
+        current_index=1,  # second milestone: CRUD API
     )
     system_prompt = build_prompt(ctx)
 
@@ -57,10 +57,8 @@ def main() -> None:
     print("Calling Gemini 2.5 Flash…")
     print()
 
-    # Try models in preference order — some may be unavailable or rate-limited.
+    # Standardized on gemini-3.1-flash-lite — confirmed working on this API key.
     models_to_try = [
-        "gemini-2.5-flash",
-        "gemini-3.5-flash",
         "gemini-3.1-flash-lite",
     ]
 
