@@ -84,7 +84,7 @@ class TestPromptStructure:
 
     # -- Top-level heading
     def test_has_title(self, prompt_first: str) -> None:
-        assert "# Learning Mode" in prompt_first
+        assert "# Scaffold.ai" in prompt_first
 
     # -- Role section
     def test_has_role_section(self, prompt_first: str) -> None:

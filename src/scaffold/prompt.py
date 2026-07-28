@@ -188,7 +188,7 @@ def build_prompt(ctx: MilestoneContext) -> str:
         prompt (or prepended to the user message) for an AI coding agent.
     """
     sections = [
-        "# Learning Mode — System Prompt",
+        "# Scaffold.ai — Learning Mode System Prompt",
         _build_role_section(),
         _build_project_section(ctx),
         _build_milestone_section(ctx),
