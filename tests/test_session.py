@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
+
 import pytest
 
 from scaffold.prompt import MilestoneContext
@@ -15,7 +15,6 @@ from scaffold.session import (
     init_session,
     load_session,
     reset_session,
-    save_session,
 )
 
 

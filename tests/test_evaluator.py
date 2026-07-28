@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
+
 import pytest
 
 from scaffold.evaluator import EvaluationResult, _clean_json_text, evaluate_answer
@@ -95,6 +96,7 @@ class TestEvaluatorResponseParsing:
 class TestLiveEvaluatorIntegration:
     def test_live_answer_evaluation(self) -> None:
         import os
+
         from dotenv import load_dotenv
         load_dotenv()
         if not os.environ.get("GEMINI_API_KEY"):

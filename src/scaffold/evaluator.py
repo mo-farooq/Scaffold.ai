@@ -6,10 +6,10 @@ evaluating conceptual understanding and providing constructive hints when needed
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import json
 import os
 import re
+from dataclasses import dataclass
 from typing import Any
 
 from dotenv import load_dotenv

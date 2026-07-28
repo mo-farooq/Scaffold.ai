@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 import os
 import re
-from typing import Sequence
 
 from dotenv import load_dotenv
 from google import genai

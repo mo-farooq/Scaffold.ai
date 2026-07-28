@@ -16,7 +16,22 @@ markers = [
 ]
 
 [dependency-groups]
-dev = ["pytest>=8.0"]
+dev = [
+    "mypy>=1.10.0",
+    "pytest>=8.0",
+    "ruff>=0.4.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.mypy]
+python_version = "3.12"
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
 
 [build-system]
 requires = ["hatchling"]

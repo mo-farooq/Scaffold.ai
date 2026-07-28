@@ -6,7 +6,6 @@ import pytest
 
 from scaffold.prompt import MilestoneContext, build_prompt
 
-
 # ── Fixtures ─────────────────────────────────────────────────────────────
 
 

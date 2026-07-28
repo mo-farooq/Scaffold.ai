@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from unittest.mock import MagicMock, patch
+
 import pytest
 
 from scaffold.generator import _clean_json_text, generate_milestones
@@ -120,6 +121,7 @@ class TestLiveGeneratorIntegration:
     def test_live_milestone_generation(self) -> None:
         """Live call to Gemini API to test milestone generation end-to-end."""
         import os
+
         from dotenv import load_dotenv
         load_dotenv()
         if not os.environ.get("GEMINI_API_KEY"):

@@ -6,11 +6,11 @@ persisted inside a local `.scaffold/session.json` file.
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
-from enum import Enum
 import json
 import os
+from dataclasses import asdict, dataclass, field
+from datetime import UTC, datetime
+from enum import Enum
 from pathlib import Path
 from typing import Any
 
@@ -28,7 +28,7 @@ class SessionState(str, Enum):
 
 def _utc_now_iso() -> str:
     """Get current UTC timestamp as ISO 8601 string."""
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 @dataclass
