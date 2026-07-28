@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from unittest.mock import MagicMock, patch
 import pytest
 
@@ -77,16 +78,41 @@ class TestGeneratorResponseParsing:
         self, mock_client_cls: MagicMock, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         monkeypatch.setenv("GEMINI_API_KEY", "fake_key")
-        
+
         mock_client = MagicMock()
         mock_client_cls.return_value = mock_client
         mock_response = MagicMock()
-        # Only 2 milestones (minimum required is 3)
-        mock_response.text = '["1. Data Model", "2. Core API"]'
+        # Only 1 milestone (minimum required is 2)
+        mock_response.text = '["1. Single Milestone"]'
         mock_client.models.generate_content.return_value = mock_response
 
-        with pytest.raises(ValueError, match="Expected between 3 and 6 milestones"):
+        with pytest.raises(ValueError, match="Expected between 2 and 10 milestones"):
             generate_milestones("Build a Todo App")
+
+    @patch("scaffold.generator.genai.Client")
+    def test_supports_two_and_eight_milestones(
+        self, mock_client_cls: MagicMock, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setenv("GEMINI_API_KEY", "fake_key")
+
+        mock_client = MagicMock()
+        mock_client_cls.return_value = mock_client
+
+        # 2 milestones for simple project
+        mock_response_simple = MagicMock()
+        mock_response_simple.text = '["M1. Simple Input", "M2. Simple Output"]'
+        mock_client.models.generate_content.return_value = mock_response_simple
+
+        simple_res = generate_milestones("Fibonacci script")
+        assert len(simple_res) == 2
+
+        # 8 milestones for complex project
+        mock_response_complex = MagicMock()
+        mock_response_complex.text = json.dumps([f"M{i}" for i in range(1, 9)])
+        mock_client.models.generate_content.return_value = mock_response_complex
+
+        complex_res = generate_milestones("E-Commerce Full Stack")
+        assert len(complex_res) == 8
 
 
 @pytest.mark.integration

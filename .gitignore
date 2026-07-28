@@ -12,5 +12,7 @@ wheels/
 
 # Raw log dumps
 *_raw.txt
+testing.py
+
 
 

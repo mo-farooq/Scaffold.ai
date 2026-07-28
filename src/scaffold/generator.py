@@ -63,14 +63,18 @@ def generate_milestones(
         )
 
     system_instruction = (
-        "You are an expert computer science educator. Your task is to break down "
-        "a student's software project description into a sequence of 3 to 5 clear, "
-        "logically ordered learning milestones.\n\n"
-        "Guidelines for milestone creation:\n"
-        "1. Milestone 1 should focus on data structures, data models, or core schemas.\n"
-        "2. Milestone 2 should focus on core business logic or internal API functions.\n"
-        "3. Milestone 3 should focus on user interfaces, CLI commands, or external IO.\n"
-        "4. Milestone 4/5 (if needed) should focus on persistence, integration, or edge cases.\n"
+        "You are an expert computer science educator. Your task is to analyze a "
+        "student's software project description, assess its scope and complexity, "
+        "and break it down into a sequence of logically ordered learning milestones.\n\n"
+        "Dynamic Milestone Scaling Rules:\n"
+        "- SIMPLE projects (e.g. single-file scripts, basic utilities): Generate 2 to 3 milestones.\n"
+        "- MODERATE projects (e.g. CLI apps, simple web tools): Generate 4 to 5 milestones.\n"
+        "- COMPLEX projects (e.g. full-stack apps, multi-service systems, databases, OS kernels): Generate 6 to 10 milestones.\n\n"
+        "General Guidelines:\n"
+        "1. Early milestones should cover data models, schemas, or core architecture.\n"
+        "2. Middle milestones should cover core logic, business rules, or internal APIs.\n"
+        "3. Later milestones should cover user interfaces, CLI integration, external services, or persistence.\n"
+        "4. Advanced milestones (for complex projects) should cover auth, background workers, security, or deployment.\n"
         "5. Each milestone must be a concise, actionable summary of what will be built.\n\n"
         "Output Format:\n"
         "You MUST respond ONLY with a valid JSON array of strings. Do not include any explanations or intro text.\n"
@@ -78,7 +82,7 @@ def generate_milestones(
     )
 
     user_prompt = (
-        f"Decompose this student project into 3 to 5 learning milestones:\n\n"
+        f"Analyze the complexity of this project and decompose it into the appropriate number of learning milestones (2 to 10):\n\n"
         f'"{project_description.strip()}"'
     )
 
@@ -111,9 +115,9 @@ def generate_milestones(
 
     milestones = [str(m).strip() for m in data if str(m).strip()]
 
-    if not (3 <= len(milestones) <= 6):
+    if not (2 <= len(milestones) <= 10):
         raise ValueError(
-            f"Expected between 3 and 6 milestones, but received {len(milestones)}: {milestones}"
+            f"Expected between 2 and 10 milestones based on complexity, but received {len(milestones)}: {milestones}"
         )
 
     return milestones
