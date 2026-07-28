@@ -1,5 +1,6 @@
-"""Scaffold – Learning Mode prompt wrapper, milestone generator, and session engine."""
+"""Scaffold – Learning Mode prompt wrapper, milestone generator, session engine, and evaluator."""
 
+from scaffold.evaluator import EvaluationResult, evaluate_answer
 from scaffold.generator import generate_milestones
 from scaffold.prompt import MilestoneContext, build_prompt
 from scaffold.session import (
@@ -14,11 +15,13 @@ from scaffold.session import (
 )
 
 __all__ = [
+    "EvaluationResult",
     "MilestoneContext",
     "Session",
     "SessionState",
     "advance_milestone",
     "build_prompt",
+    "evaluate_answer",
     "generate_milestones",
     "get_current_context",
     "init_session",
