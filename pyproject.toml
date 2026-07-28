@@ -11,6 +11,9 @@ dependencies = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "integration: marks tests as live integration tests",
+]
 
 [dependency-groups]
 dev = ["pytest>=8.0"]
