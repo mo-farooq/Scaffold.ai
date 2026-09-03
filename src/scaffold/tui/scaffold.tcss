@@ -1,0 +1,190 @@
+/* Scaffold.ai — TUI Stylesheet */
+
+/* ── Global ───────────────────────────────────────────── */
+
+Screen {
+    background: $surface;
+}
+
+/* ── Welcome Screen ───────────────────────────────────── */
+
+#welcome-container {
+    align: center middle;
+    width: 100%;
+    height: 100%;
+}
+
+#welcome-banner {
+    text-align: center;
+    padding: 2 4;
+    margin-bottom: 1;
+    color: $text;
+}
+
+#welcome-menu {
+    align: center middle;
+    width: 60;
+    height: auto;
+    padding: 1 2;
+}
+
+#welcome-menu Button {
+    width: 100%;
+    margin-bottom: 1;
+}
+
+/* ── Setup Screen ─────────────────────────────────────── */
+
+#setup-container {
+    align: center middle;
+    width: 100%;
+    height: 100%;
+    padding: 2 4;
+}
+
+#setup-input-area {
+    width: 80%;
+    max-width: 100;
+    height: auto;
+    align: center middle;
+}
+
+#project-input {
+    width: 100%;
+    margin-bottom: 1;
+}
+
+#milestone-panel {
+    width: 80%;
+    max-width: 100;
+    height: auto;
+    max-height: 60%;
+    margin-top: 1;
+    padding: 1 2;
+    border: solid $accent;
+}
+
+#setup-buttons {
+    width: 80%;
+    max-width: 100;
+    layout: horizontal;
+    align: center middle;
+    height: auto;
+    margin-top: 1;
+}
+
+#setup-buttons Button {
+    margin: 0 1;
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 2;
+    color: $text-muted;
+}
+
+/* ── Session Screen (Main Learning View) ──────────────── */
+
+#session-layout {
+    layout: horizontal;
+    width: 100%;
+    height: 1fr;
+}
+
+#chat-panel {
+    width: 3fr;
+    height: 100%;
+    border-right: solid $surface-lighten-2;
+}
+
+#chat-log {
+    width: 100%;
+    height: 1fr;
+    padding: 0 1;
+}
+
+#sidebar {
+    width: 1fr;
+    min-width: 28;
+    max-width: 36;
+    height: 100%;
+    padding: 1;
+}
+
+#milestone-list {
+    height: auto;
+    max-height: 50%;
+    padding: 0 1;
+    margin-bottom: 1;
+}
+
+#stats-panel {
+    height: auto;
+    padding: 0 1;
+}
+
+#message-input {
+    dock: bottom;
+    width: 100%;
+    margin-top: 1;
+}
+
+.milestone-done {
+    color: $success;
+}
+
+.milestone-current {
+    color: $accent;
+    text-style: bold;
+}
+
+.milestone-pending {
+    color: $text-muted;
+}
+
+.section-title {
+    text-style: bold;
+    color: $accent;
+    margin-bottom: 1;
+}
+
+/* ── Status Dashboard ─────────────────────────────────── */
+
+#status-container {
+    width: 100%;
+    height: 100%;
+    padding: 1 2;
+}
+
+#status-header {
+    height: auto;
+    margin-bottom: 1;
+    padding: 1 2;
+    text-align: center;
+}
+
+#progress-section {
+    height: auto;
+    margin-bottom: 1;
+    padding: 1 2;
+    border: solid $accent;
+}
+
+#analytics-section {
+    height: auto;
+    margin-bottom: 1;
+    padding: 1 2;
+    border: solid $accent;
+}
+
+#timeline-section {
+    height: 1fr;
+    padding: 1 2;
+    border: solid $accent;
+}
+
+#back-button {
+    dock: bottom;
+    width: auto;
+    margin: 1 2;
+}
