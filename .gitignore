@@ -1,0 +1,19 @@
+# Environment & Secrets
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Local workspace state
+PROGRESS.md
+
+# Legacy Python virtualenv (if any)
+.venv/
+__pycache__/
+*.pyc

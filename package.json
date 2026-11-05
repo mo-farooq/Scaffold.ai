@@ -1,0 +1,42 @@
+{
+  "name": "scaffold-ai",
+  "version": "1.0.0",
+  "description": "The Anti-Vibe-Coding Agent Skill for Google Antigravity, Claude Code, Cursor, and Codex. Paces development around Socratic mastery instead of passive code generation.",
+  "type": "module",
+  "main": "skills/scaffold/scripts/init-scaffold.mjs",
+  "bin": {
+    "scaffold": "skills/scaffold/scripts/init-scaffold.mjs"
+  },
+  "scripts": {
+    "init": "node skills/scaffold/scripts/init-scaffold.mjs",
+    "verify": "node skills/scaffold/scripts/verify-gate.mjs"
+  },
+  "keywords": [
+    "antigravity",
+    "antigravity-skill",
+    "skills",
+    "skills-sh",
+    "agent-skills",
+    "claude-code",
+    "cursor",
+    "codex",
+    "opencode",
+    "socratic-tutor",
+    "learning-mode",
+    "anti-vibe-coding",
+    "build-from-scratch"
+  ],
+  "author": "Mohammad Farooq",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo-farooq/Scaffold.ai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mo-farooq/Scaffold.ai/issues"
+  },
+  "homepage": "https://github.com/mo-farooq/Scaffold.ai#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
