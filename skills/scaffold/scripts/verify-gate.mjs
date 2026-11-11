@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Scaffold Reflection Gate Verification Script
- * Unlocks milestones in PROGRESS.md strictly sequentially, updates Mental Model Matrix,
- * and logs Aha Moments idempotently.
+ * Scaffold Reflection Gate Recorder Script
+ * Records an agent-approved milestone gate in PROGRESS.md strictly sequentially,
+ * updates the Mental Model Matrix, and logs Aha Moments idempotently.
  *
  * Usage:
  *   node skills/scaffold/scripts/verify-gate.mjs [--milestone <num>] [--aha "<summary>"] [--guided]
@@ -63,7 +63,7 @@ function parseArgs() {
 
 function showHelp() {
   console.log(`
-${bold(cyan('Scaffold Gate Verification CLI'))}
+  ${bold(cyan('Scaffold Gate Recorder CLI'))}
 
 Usage:
   node verify-gate.mjs [--milestone <num>] [--aha "<summary>"] [--guided]
@@ -275,13 +275,15 @@ Copy this badge into your project's \`README.md\`:
 
   console.log(`
 ${green('========================================================================')}
-${bold(green(`  🎉 MILESTONE ${targetNum} VERIFIED & DEFENDED!`))}
+${bold(green(`  🎉 MILESTONE ${targetNum} RECORDED!`))}
 ${green('========================================================================')}
 
 ${bold('Progress:')} [${progressBar}] ${bold(cyan(`${progressPercent}%`))} (${completedCount}/${totalCount})
 ${bold('Mastery State:')} ${masteryBadge}
 ${options.aha ? `${bold('Aha Moment:')}   "${yellow(options.aha)}"\n` : ''}
-${nextMilestone ? `${bold('Next Stage:')}   ${yellow(`Milestone ${nextMilestone.number}: ${nextMilestone.titleClean}`)}` : `${bold('Project Status:')} ${green('COMPLETE! 🏆')}`}
+${nextMilestone ? `${bold('Next Stage:')}   ${yellow(`Milestone ${nextMilestone.number}: ${nextMilestone.titleClean}`)}` : `${bold('Project State:')} ${green('ALL MILESTONES RECORDED! 🏆')}`}
+
+${bold('Review note:')} This command records the agent-approved reflection gate; it does not inspect the diff or evaluate the learner.
 
 ${bold('👉 Check PROGRESS.md in your editor split for updated status.')}
 `);

@@ -47,6 +47,9 @@ function parseArgs() {
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
+    if (i === 0 && arg === 'init') {
+      continue;
+    }
     if (arg === '--track') {
       if (i + 1 >= args.length) {
         console.error(red('Error: --track requires a track name.'));
@@ -161,6 +164,7 @@ function generateDefaultMilestones(idea) {
 }
 
 function setupWorkspaceGuardrails(options) {
+  const warnings = [];
   try {
     const targetAgentsRulesDir = path.join(process.cwd(), '.agents/rules');
     if (!fs.existsSync(targetAgentsRulesDir)) {
@@ -185,8 +189,9 @@ function setupWorkspaceGuardrails(options) {
       }
     }
   } catch (err) {
-    // Non-fatal if permission denied in read-only environments
+    warnings.push(`Workspace guardrail setup was incomplete: ${err.message}`);
   }
+  return warnings;
 }
 
 function main() {
@@ -235,14 +240,26 @@ function main() {
 
   // Format Concept Mastery Matrix
   const masteryMatrix = projectData.milestones
-    .map((m) => `| M${m.number} | ${m.title} | 🔴 Unverified | Pending 4-Axis Diff Review |`)
+    .map((m) => `| M${m.number} | ${m.title} | 🔴 Not reviewed | Pending 4-Axis Diff Review |`)
     .join('\n');
 
   const executionMode = options.hardcore
     ? 'Hardcore Mode (100% Student Code, 0% AI Code)'
     : 'Mentor Mode (AI Boilerplate Glue + TODO(scaffold) Stubs)';
 
-  const initialDecisions = `| 1 | *In Progress* | - | Initializing ${projectData.milestones[0].title} |`;
+  const firstMilestone = projectData.milestones[0];
+  const currentMilestoneGoal = `Build the first observable outcome of ${firstMilestone.title}.`;
+  const nextAction = options.hardcore
+    ? `Create the first source file needed for ${firstMilestone.title}.`
+    : 'Ask your agent for the architectural briefing, then locate the first TODO(scaffold) stub.';
+  const learnerOwnership = options.hardcore
+    ? 'All source files, boilerplate, and core logic.'
+    : 'Core algorithmic logic inside TODO(scaffold) blocks and the design decisions behind it.';
+  const agentOwnership = options.hardcore
+    ? 'Architecture, questions, progressive hints, and reflection review; no source-code files.'
+    : 'Environment setup, configuration, test harnesses, entry-point wiring, and explicit stubs.';
+
+  const initialDecisions = `| 1 | *In Progress* | - | Initializing ${firstMilestone.title} |`;
   const initialAhaLog = `*Milestone reflections and key takeaways will be recorded here upon completing each gate.*`;
 
   // Fill in placeholders
@@ -251,12 +268,16 @@ function main() {
     .replace(/\{\{TRACK_OR_IDEA\}\}/g, trackOrIdea)
     .replace(/\{\{EXECUTION_MODE\}\}/g, executionMode)
     .replace(/\{\{CURRENT_MILESTONE_NUM\}\}/g, '1')
-    .replace(/\{\{CURRENT_MILESTONE_TITLE\}\}/g, projectData.milestones[0].title)
+    .replace(/\{\{CURRENT_MILESTONE_TITLE\}\}/g, firstMilestone.title)
+    .replace(/\{\{CURRENT_MILESTONE_GOAL\}\}/g, currentMilestoneGoal)
+    .replace(/\{\{NEXT_ACTION\}\}/g, nextAction)
+    .replace(/\{\{LEARNER_OWNERSHIP\}\}/g, learnerOwnership)
+    .replace(/\{\{AGENT_OWNERSHIP\}\}/g, agentOwnership)
     .replace(/\{\{PROGRESS_BAR\}\}/g, '░░░░░░░░░░░░░░░░░░░░')
     .replace(/\{\{PROGRESS_PERCENT\}\}/g, '0')
     .replace(/\{\{COMPLETED_COUNT\}\}/g, '0')
     .replace(/\{\{TOTAL_COUNT\}\}/g, String(projectData.milestones.length))
-    .replace(/\{\{MASTERY_SCORE\}\}/g, '100')
+    .replace(/\{\{MASTERY_SCORE\}\}/g, 'Not yet reviewed')
     .replace(/\{\{MASTERY_MATRIX\}\}/g, masteryMatrix)
     .replace(/\{\{MILESTONES_LIST\}\}/g, milestonesList)
     .replace(/\{\{DECISIONS_LOG\}\}/g, initialDecisions)
@@ -266,18 +287,21 @@ function main() {
   fs.writeFileSync(targetPath, filledProgress, 'utf8');
 
   // Set up workspace guardrails in .agents/rules/
-  setupWorkspaceGuardrails(options);
+  const guardrailWarnings = setupWorkspaceGuardrails(options);
 
   console.log(`
 ${green('✅ Scaffold initialized successfully!')}
 File created: ${bold(cyan(targetPath))}
 Mode:         ${bold(yellow(executionMode))}
+${guardrailWarnings.length ? `\n${guardrailWarnings.map((warning) => yellow(`Warning: ${warning}`)).join('\n')}` : ''}
 
 ${bold('👉 NEXT STEPS:')}
 1. Open ${bold('PROGRESS.md')} in your editor's right split (${cyan('Cmd+Shift+V')} or ${cyan('Ctrl+Shift+V')}).
-2. ${yellow('Snooze AI ghost-text')} so inline auto-complete doesn't spoil the learning loop!
-3. Ask your agent: ${yellow('"What is our architectural goal for Milestone 1?"')}
-4. When finished with Milestone 1, run ${cyan('/scaffold verify')}.
+2. ${yellow('Snooze AI ghost-text')} so inline auto-complete doesn't spoil the learning loop.
+3. ${bold('Current milestone:')} ${firstMilestone.title}
+4. ${bold('Your first action:')} ${nextAction}
+5. ${bold('Need help?')} Ask for a ${yellow('Level 1 analogy and guiding question')}.
+6. When finished, ask your agent for the ${cyan('4-axis reflection gate')} before running verification.
 `);
 }
 

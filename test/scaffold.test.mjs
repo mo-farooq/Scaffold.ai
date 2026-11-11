@@ -47,7 +47,11 @@ describe('init-scaffold.mjs', () => {
       assert.match(content, /Milestone 1/);
       assert.match(content, /▶ \*\*\[ACTIVE\]\*\*/);
       assert.match(content, /## 🧠 Mental Model Matrix/);
-      assert.match(content, /🔴 Unverified/);
+      assert.match(content, /🔴 Not reviewed/);
+      assert.match(content, /## 🚀 Start Here/);
+      assert.match(content, /\*\*Your next action\*\*/);
+      assert.match(content, /\*\*You own\*\*/);
+      assert.match(content, /\*\*The agent owns\*\*/);
 
       // Verify workspace guardrail was copied
       const rulePath = path.join(tempDir, '.agents/rules/scaffold-guardrails.md');
@@ -72,6 +76,14 @@ describe('init-scaffold.mjs', () => {
 
     const progress = fs.readFileSync(path.join(tempDir, 'PROGRESS.md'), 'utf8');
     assert.match(progress, /Hardcore Mode \(100% Student Code, 0% AI Code\)/);
+  });
+
+  test('accepts the documented init subcommand', () => {
+    const res = runScript(INIT_SCRIPT, ['init', '--track', 'redis']);
+    assert.equal(res.status, 0, res.stderr);
+    assert.match(res.stdout, /Current milestone:.*TCP Server & PING \/ ECHO/);
+    assert.match(res.stdout, /Your first action:/);
+    assert.match(res.stdout, /Level 1 analogy/);
   });
 
   test('refuses to overwrite existing PROGRESS.md without --force', () => {
@@ -194,6 +206,9 @@ describe('verify-gate.mjs', () => {
       '--aha', 'Length-prefixes prevent buffer split over-reads.',
     ]);
     assert.equal(res.status, 0, res.stderr);
+    assert.match(res.stdout, /MILESTONE 1 RECORDED/);
+    assert.match(res.stdout, /does not inspect the diff or evaluate the learner/);
+    assert.doesNotMatch(res.stdout, /VERIFIED & DEFENDED/);
 
     const progress = fs.readFileSync(path.join(tempDir, 'PROGRESS.md'), 'utf8');
 

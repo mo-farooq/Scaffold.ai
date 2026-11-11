@@ -42,33 +42,32 @@ To achieve maximum adoption and virality (targeting 1,000+ GitHub stars), Scaffo
 
 ## 4. Decision Outcome
 
-**Chosen Option**: **Option 3**.
+**Chosen Option**: **Option 3**, with `skills/scaffold/` as the canonical distributable unit and root-level links retained only for repository visitors.
 
 ### Architecture:
 
 ```
 scaffold/
 ├── package.json                      # npm / skills.sh package metadata
-├── rules/
-│   └── scaffold-guardrails.md        # Antigravity always-on rule banning direct solution dumps
 ├── skills/
 │   └── scaffold/
 │       ├── SKILL.md                  # Core manifest + Socratic state machine (<5,000 tokens)
 │       ├── scripts/
 │       │   ├── init-scaffold.mjs     # Creates PROGRESS.md & sets up workspace guardrails
-│       │   └── verify-gate.mjs       # Validates milestone completion & updates mastery stats
+│       │   └── verify-gate.mjs       # Records an agent-approved gate & updates mastery stats
 │       ├── references/
 │       │   ├── socratic-rubric.md    # Multi-level hinting without spoiling answers
 │       │   └── tradeoff-prompts.md   # Architectural trade-off reflection questions
 │       └── assets/
-│           └── PROGRESS.template.md  # Live checklist & comprehension tracker template
-├── tracks/                           # Pre-built curriculum tracks
-│   ├── redis-from-scratch.md
-│   ├── git-from-scratch.md
-│   ├── http-server-from-scratch.md
-│   ├── sqlite-from-scratch.md
-│   └── docker-from-scratch.md
-└── README.md                         # Anti-vibe-coding pitch & split-screen demo
+│           ├── PROGRESS.template.md  # Live checklist & comprehension tracker template
+│           ├── rules/                 # Workspace rule copied during initialization
+│           └── tracks/                # Curated curriculum tracks
+├── rules -> skills/scaffold/assets/rules
+├── tracks -> skills/scaffold/assets/tracks
+├── docs/
+│   └── compatibility.md              # Supported-surface validation matrix
+├── test/                              # Deterministic and behavioral evaluations
+└── README.md                         # User journey, install guide, and project overview
 ```
 
 ---

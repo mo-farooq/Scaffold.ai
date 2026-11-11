@@ -9,8 +9,7 @@
   },
   "files": [
     "skills/",
-    "rules/",
-    "tracks/",
+    "docs/compatibility.md",
     "README.md",
     "LICENSE"
   ],
