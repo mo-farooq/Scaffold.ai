@@ -5,111 +5,136 @@
 [![Supported Agents](https://img.shields.io/badge/Agents-Antigravity%20%7C%20Claude%20Code%20%7C%20Cursor%20%7C%20Codex-6c5ce7?style=for-the-badge)](https://github.com/mo-farooq/Scaffold.ai)
 
 > **Cure "AI Skill Atrophy".**  
-> Scaffold is an open-source agent skill that transforms AI coding assistants from passive code generators into rigorous Socratic engineering mentors. It enforces progressive milestone pacing, blocks unsolicited solution dumps, and requires conceptual reflection gates before unlocking your next step.
+> Scaffold is an open-source agent skill that transforms AI coding assistants from passive code generators into rigorous Socratic engineering mentors. It handles repetitive boilerplate wiring while protecting core logic with `TODO(scaffold)` stubs, enforces a live split-pane `PROGRESS.md` checklist, and gates milestones behind a **4-Axis Diff Review**.
 
 ---
 
 ## ⚡ Install in 5 Seconds
 
-Works natively across **Google Antigravity**, **Claude Code**, **Cursor**, **Codex**, and **OpenCode**:
+Scaffold installs cleanly into any repository through the universal `skills.sh` ecosystem:
 
 ```bash
 npx skills add mo-farooq/scaffold
 ```
 
-*(Or inside Google Antigravity workspaces: copy `.agents/skills/scaffold` and `.agents/rules/` directly into your repo).*
+Works natively with **Google Antigravity**, **Claude Code**, **Cursor**, **Codex**, and **OpenCode**.
 
 ---
 
 ## 🥊 The Problem: The "Vibe-Coding" Trap
 
 Current AI coding agents default to writing complete implementations for you. While convenient, this creates **severe AI skill atrophy**:
-* Developers commit thousands of lines of code they couldn't explain in a technical interview.
+* Developers commit thousands of lines of code they couldn't explain in a technical interview or system design review.
 * Complex distributed systems fail in production because the engineer never learned the underlying trade-offs.
 * "Vibe coding" gives you the illusion of productivity while eroding your architectural intuition.
 
-### Scaffold vs. Standard Coding Agents
+---
 
-| Feature | Standard Coding Agents | Scaffold Socratic Skill |
-| :--- | :--- | :--- |
-| **Code Generation** | Dumps 300 lines of code directly into your files | **Strictly banned from writing your project code** |
-| **Pacing** | Tries to finish the whole app in one prompt | Paces development into 3–5 bite-sized milestones |
-| **Guidance** | Gives you the answer | Socratic hinting (Analogy → Flow → API pointer) |
-| **Comprehension** | Assumes you understand | Blocks progress until you pass a **Reflection Gate** |
-| **Progress Tracker** | None | Live split-pane **`PROGRESS.md`** with ASCII progress bar |
+## 📊 How Scaffold Compares
+
+| Dimension | Standard Coding Agents (Cursor / Copilot) | Built-in IDE Learning Modes (Claude Code / rules) | Text-Only Socratic Prompts | **Scaffold.ai Agent Skill** |
+| :--- | :---: | :---: | :---: | :---: |
+| **Always-On Anti-Dump Guardrail** | ❌ Dumps all code | ⚠️ Weak prompt, easily bypassed | ❌ None | **✅ Strict file-tool guardrail block** |
+| **Boilerplate Glue vs. Core Stubs** | ❌ Writes everything | ❌ All or nothing | ❌ None | **✅ Writes glue, stubs `TODO(scaffold)`** |
+| **Live Split-Pane Progress Tracker** | ❌ None | ❌ Ephemeral chat | ❌ None | **✅ Real-time `PROGRESS.md` & Matrix** |
+| **Strictly Sequential Milestone Gate** | ❌ None | ❌ None | ❌ None | **✅ Deterministic sequential gating** |
+| **4-Axis `git diff` Review Gate** | ❌ None | ❌ None | ❌ None | **✅ Correctness, Edges, Big-O, Security** |
+| **5 Pre-Built Systems Tracks** | ❌ None | ❌ None | ❌ None | **✅ Redis, Git, HTTP, SQLite, Docker** |
+| **Everyday Pre-Commit Mode** | ❌ None | ❌ None | ❌ None | **✅ `/scaffold quiz` on uncommitted diff** |
 
 ---
 
-## 🖥️ The Split-Pane In-IDE Experience
+## 🔒 Guaranteed vs. Agent-Dependent Behavior
 
-Scaffold is designed to run natively inside your editor split:
+To keep distribution and integration transparent, Scaffold cleanly divides deterministic script guarantees from probabilistic agent behavior:
 
-```
-┌──────────────────────────────────────┬──────────────────────────────────────┐
-│  EDITOR LEFT: YOUR SOURCE CODE       │  EDITOR RIGHT: LIVE PROGRESS.MD      │
-│                                      │                                      │
-│  class RedisServer:                  │  # 🏗️ Scaffold Progress: Redis Clone │
-│      def __init__(self, port=6379):  │                                      │
-│          self.socket = socket.socket │  [████████░░░░░░░░░░░░] 40% (2/5)    │
-│          ...                         │                                      │
-│                                      │  - [x] Milestone 1: TCP Server ✅    │
-│  # YOU write every line of code!     │  - [x] Milestone 2: RESP Parser ✅   │
-│  # The agent guides architecture,    │  - [ ] Milestone 3: ▶ [ACTIVE] GET/SET│
-│  # but NEVER writes your solution.   │  - [ ] Milestone 4: Key Expiration   │
-│                                      │  - [ ] Milestone 5: Append-Only AOF  │
-└──────────────────────────────────────┴──────────────────────────────────────┘
-```
+### What Scaffold Guarantees (Deterministic System)
+* **Safe Project Initialization**: `init-scaffold.mjs` safely scaffolds `PROGRESS.md` and workspace rules without clobbering existing user progress unless `--force` is explicitly provided.
+* **Strictly Sequential Gating**: `verify-gate.mjs` strictly permits verification of only the first unchecked milestone. Skipped milestones are rejected.
+* **Idempotent State**: Re-running verification on already-completed milestones is safe, idempotent, and will never corrupt checklist state, badges, or matrix entries.
+* **Deterministic Tracking**: Progress calculation, ASCII progress bars, Mental Model Matrix states (`🔴 / 🟡 / 🟢`), and the Aha Moments Journal are managed deterministically.
+
+### What is Agent-Dependent (Probabilistic Model Behavior)
+* **Adherence to Guardrails**: The rule `rules/scaffold-guardrails.md` instructs the agent not to write code inside `TODO(scaffold)` stubs. This is a behavioral system instruction, not an OS kernel sandbox.
+* **Pedagogical Depth**: The nuance of Socratic progressive hints (Level 1 $\to$ 2 $\to$ 3) and the rigor of the 4-Axis diff evaluation depend on the reasoning capability of the host model (e.g. Claude 3.7 / 3.5 Sonnet, GPT-4o, Codex).
 
 ---
 
-## 🚀 How to Use It
+## 🔄 The 5-Phase Socratic Workflow
 
-### 1. Start Any Custom Project Idea
-In your agent's chat panel, type:
-```text
-/scaffold Build a rate-limited API in Node.js
+```mermaid
+graph LR
+    A["1. Install<br/>(npx skills add)"] --> B["2. Pick Track/Idea<br/>(/scaffold track redis)"]
+    B --> C["3. Split Dashboard<br/>(TODO(scaffold) Stubs)"]
+    C --> D["4. Socratic Loop<br/>(Analogy → Flow → API)"]
+    D --> E["5. 4-Axis Gate<br/>(Diff Review & Matrix)"]
 ```
-Scaffold generates `PROGRESS.md`, locks the workspace guardrails, and introduces Milestone 1.
 
-### 2. Or Pick a Curated "Build X from Scratch" Track
-Want to master system design? Scaffold includes 5 battle-tested curriculum tracks:
+### Phase 1: Zero-Friction Install
+Run `npx skills add mo-farooq/scaffold`. It mounts the canonical `skills/scaffold/` package into your editor's skill engine.
 
+### Phase 2: Pick a Track or Custom Idea
+* Custom Idea: `/scaffold Build a rate-limited API in Node.js`
+* Curated Track: `/scaffold track redis` (or `git`, `http`, `sqlite`, `docker`)
+* Optional `--hardcore`: Learner writes 100% of files; agent writes zero code.
+
+### Phase 3: Split-Screen Dashboard & `TODO(scaffold)` Stubs
+Scaffold writes `PROGRESS.md` in your workspace and initializes workspace guardrails:
+* Open `PROGRESS.md` in your right editor split (`Markdown: Open Preview to the Side`).
+* **Mentor Mode (Default)**: The agent scaffolds configuration files, environment setups, and test runners ("the glue"), but stubs core algorithmic functions with:
+  ```typescript
+  export function parseRespCommand(buffer: Buffer): RespCommand {
+    // TODO(scaffold): Parse RESP stream chunks into commands without dropping bytes.
+    // Must handle fragmented buffers and length-prefixed bulk strings ($<len>\r\n<payload>\r\n).
+    throw new Error("TODO(scaffold): parseRespCommand not implemented");
+  }
+  ```
+* **Guardrail**: The agent is strictly banned from writing logic inside `TODO(scaffold)`. **YOU write the core logic.**
+
+### Phase 4: 3-Tier Socratic Guidance Loop
+When stuck on a `TODO(scaffold)` block, ask your agent. Instead of spoiling the code, it escalates through 3 tiers:
+1. **Level 1 (Conceptual Analogy)**: Real-world mental model & guiding question. *(Solves qualify for `🟢 Mastered`)*.
+2. **Level 2 (Control Flow & Pseudocode)**: State machine diagram or language-agnostic logic steps. *(Records as `🟡 Guided`)*.
+3. **Level 3 (Targeted API Pointer)**: Points out standard library signatures or buffer methods without writing the code.
+
+### Phase 5: 4-Axis Diff Gate & Mental Model Matrix
+When you finish a milestone, run `/scaffold verify [milestone]`.
+1. The agent inspects your uncommitted `git diff` across:
+   - **Axis 1: Functional Correctness** (Does it meet the milestone spec?)
+   - **Axis 2: Edge Cases & Error Handling** (Nulls, partial packets, boundaries)
+   - **Axis 3: Big-O Complexity** (Time & memory trade-offs)
+   - **Axis 4: Security & Resource Safety** (Leaks, unclosed handles, payload overflows)
+2. The agent asks **ONE deep architectural trade-off or "What breaks if..." question**.
+3. Defend your code in your own words! Once verified, Scaffold marks the milestone complete, updates your **Mental Model Matrix** (`🔴 / 🟡 / 🟢`), records your **Aha Moments Journal**, and unlocks the next milestone.
+
+---
+
+## ⚡ Everyday Mode: `/scaffold quiz` (Pre-Commit Defensibility)
+
+Not building from scratch today? You can still use Scaffold on your daily production code!
+
+Before running `git commit`, run:
 ```text
-/scaffold track redis
+/scaffold quiz
 ```
+Scaffold inspects your staged/unstaged `git diff` and asks 3 rapid-fire questions:
+1. **Intent**: *"What core problem does this diff solve in 1 sentence?"*
+2. **Mechanism**: *"Walk through the execution flow of your primary function change."*
+3. **Failure Mode**: *"Under what runtime scenario will this implementation throw an error or perform poorly?"*
+
+Defend all 3 questions so you never push AI-generated code you can't defend in code review or an architectural viva.
+
+---
+
+## 🗺️ Curated "Build X from Scratch" Tracks
 
 | Track | What You Build | Core Concepts Mastered |
 | :--- | :--- | :--- |
-| [⚡ **Redis Clone**](tracks/redis-from-scratch.md) | In-memory key-value DB that connects with `redis-cli` | TCP sockets, RESP protocol, TTL sampling, AOF disk persistence |
-| [🌳 **Git from Scratch**](tracks/git-from-scratch.md) | Content-addressable version control system | SHA hashes, zlib deflation, Merkle trees, commit DAGs |
-| [🌐 **HTTP/1.1 Server**](tracks/http-server-from-scratch.md) | High-throughput web server from raw TCP sockets | RFC 7230 framing, packet fragmentation, persistent Keep-Alive |
-| [🗄️ **Mini SQLite**](tracks/sqlite-from-scratch.md) | Embedded relational database with disk persistence | B+ Trees, 4KB page buffer cache, binary row serialization |
-| [🐳 **Docker Runtime**](tracks/docker-from-scratch.md) | Process containerization runtime | Linux namespaces (`CLONE_NEWPID`), cgroups v2, OverlayFS |
-
----
-
-## 🔒 The Dual-Layer Architecture
-
-Antigravity and modern coding harnesses separate continuous constraints from on-demand workflows. Scaffold leverages both:
-
-```mermaid
-graph TD
-    A["User triggers /scaffold"] --> B["Progressive Skill (skills/scaffold/SKILL.md)"]
-    B --> C["Deterministic Script (scripts/init-scaffold.mjs)"]
-    C --> D["Generates PROGRESS.md in Workspace Root"]
-    D --> E["Always-On Guardrail Rule (rules/scaffold-guardrails.md)"]
-    E --> F["Strictly blocks agent from code-dumping"]
-    F --> G["Forces Socratic 3-Level Hinting (references/socratic-rubric.md)"]
-    G --> H["End of Milestone: Reflection Gate (references/tradeoff-prompts.md)"]
-    H --> I["Verified! scripts/verify-gate.mjs unlocks next checkbox"]
-```
-
-1. **Always-On Guardrail Rule (`rules/scaffold-guardrails.md`)**:
-   Stays continuously active whenever `PROGRESS.md` exists. Blocks the agent from using file-editing tools to write your solution.
-2. **Progressive-Disclosure Skill (`skills/scaffold/SKILL.md`)**:
-   Runs the Socratic state machine under 5,000 tokens, loading pedagogical rubrics and trade-off prompts only when needed.
-3. **Deterministic Helper Scripts (`skills/scaffold/scripts/`)**:
-   Node.js scripts (`init-scaffold.mjs`, `verify-gate.mjs`) calculate mastery stats and update markdown checkboxes without consuming LLM context tokens.
+| [⚡ **Redis Clone**](skills/scaffold/assets/tracks/redis-from-scratch.md) | In-memory key-value DB that connects with `redis-cli` | TCP sockets, RESP protocol, TTL sampling, AOF disk persistence |
+| [🌳 **Git from Scratch**](skills/scaffold/assets/tracks/git-from-scratch.md) | Content-addressable version control system | SHA hashes, zlib deflation, Merkle trees, commit DAGs |
+| [🌐 **HTTP/1.1 Server**](skills/scaffold/assets/tracks/http-server-from-scratch.md) | High-throughput web server from raw TCP sockets | RFC 7230 framing, packet fragmentation, persistent Keep-Alive |
+| [🗄️ **Mini SQLite**](skills/scaffold/assets/tracks/sqlite-from-scratch.md) | Embedded relational database with disk persistence | B+ Trees, 4KB page buffer cache, binary row serialization |
+| [🐳 **Docker Runtime**](skills/scaffold/assets/tracks/docker-from-scratch.md) | Process containerization runtime | Linux namespaces (`CLONE_NEWPID`), cgroups v2, OverlayFS |
 
 ---
 
@@ -128,15 +153,6 @@ When you complete all milestones in a project, Scaffold generates a verified com
 ## 📦 Legacy Standalone CLI Harness
 
 The original Python standalone CLI / Textual terminal harness (`scaffold`) built during early prototypes is permanently preserved in the [`archive/cli-harness`](https://github.com/mo-farooq/Scaffold.ai/tree/archive/cli-harness) branch and release tag [`v0.1.0-harness`](https://github.com/mo-farooq/Scaffold.ai/releases/tag/v0.1.0-harness).
-
----
-
-## 🤝 Contributing & Community
-
-We welcome new system design tracks, trade-off questions, and language adapters!
-1. Fork the repository
-2. Add your curriculum blueprint under `tracks/your-system-from-scratch.md`
-3. Submit a Pull Request
 
 ---
 

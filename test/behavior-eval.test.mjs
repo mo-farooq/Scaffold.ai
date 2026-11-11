@@ -1,0 +1,136 @@
+import { test, describe, beforeEach, afterEach } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const REPO_ROOT = path.resolve(__dirname, '..');
+const INIT_SCRIPT = path.join(REPO_ROOT, 'skills/scaffold/scripts/init-scaffold.mjs');
+const VERIFY_SCRIPT = path.join(REPO_ROOT, 'skills/scaffold/scripts/verify-gate.mjs');
+const GUARDRAILS_FILE = path.join(REPO_ROOT, 'skills/scaffold/assets/rules/scaffold-guardrails.md');
+const SKILL_FILE = path.join(REPO_ROOT, 'skills/scaffold/SKILL.md');
+
+let evalDir;
+
+function run(cmd, args = [], cwd = evalDir) {
+  return spawnSync(cmd, args, { cwd, encoding: 'utf8' });
+}
+
+beforeEach(() => {
+  evalDir = fs.mkdtempSync(path.join(os.tmpdir(), 'scaffold-eval-'));
+  // Initialize a real git repo for diff testing
+  run('git', ['init', '-b', 'main'], evalDir);
+  run('git', ['config', 'user.name', 'Scaffold Evaluator'], evalDir);
+  run('git', ['config', 'user.email', 'eval@scaffold.ai'], evalDir);
+});
+
+afterEach(() => {
+  if (evalDir && fs.existsSync(evalDir)) {
+    fs.rmSync(evalDir, { recursive: true, force: true });
+  }
+});
+
+describe('Behavioral Scenario Evaluations', () => {
+  test('Scenario 1: /scaffold track redis in clean repo', () => {
+    const res = run(process.execPath, [INIT_SCRIPT, '--track', 'redis']);
+    assert.equal(res.status, 0);
+
+    const progress = fs.readFileSync(path.join(evalDir, 'PROGRESS.md'), 'utf8');
+    assert.match(progress, /Build a Redis Clone from Scratch/);
+    assert.match(progress, /▶ \*\*\[ACTIVE\]\*\* TCP Server & PING \/ ECHO/);
+    assert.match(progress, /## 🧠 Mental Model Matrix/);
+    assert.match(progress, /🔴 Unverified/);
+
+    const rule = fs.readFileSync(path.join(evalDir, '.agents/rules/scaffold-guardrails.md'), 'utf8');
+    assert.match(rule, /No Solution Dumps/);
+    assert.match(rule, /Mentor Mode/);
+    assert.match(rule, /TODO\(scaffold\)/);
+  });
+
+  test('Scenario 2: /scaffold Build a rate-limited API in clean repo', () => {
+    const res = run(process.execPath, [INIT_SCRIPT, '--idea', 'Build a rate-limited API in Node.js']);
+    assert.equal(res.status, 0);
+
+    const progress = fs.readFileSync(path.join(evalDir, 'PROGRESS.md'), 'utf8');
+    assert.match(progress, /Build a rate-limited API in Node\.js/);
+    assert.match(progress, /Milestone 1.*Core Architecture/);
+    assert.match(progress, /Milestone 4.*Persistence/);
+  });
+
+  test('Scenario 3: /scaffold --hardcore mode contract verification', () => {
+    const res = run(process.execPath, [INIT_SCRIPT, '--track', 'git', '--hardcore']);
+    assert.equal(res.status, 0);
+
+    const progress = fs.readFileSync(path.join(evalDir, 'PROGRESS.md'), 'utf8');
+    assert.match(progress, /Hardcore Mode \(100% Student Code, 0% AI Code\)/);
+
+    // Verify SKILL.md and guardrails forbid code generation in Hardcore mode
+    const skill = fs.readFileSync(SKILL_FILE, 'utf8');
+    assert.match(skill, /Learner writes 100% of source files.*Agent writes zero source-code files/);
+    assert.match(skill, /Hardcore mode still permits progress metadata generation/);
+  });
+
+  test('Scenario 4: Learner asks for a solution to a TODO(scaffold) block', () => {
+    // Scaffold project
+    run(process.execPath, [INIT_SCRIPT, '--track', 'redis']);
+
+    // Create a mock source file with TODO(scaffold)
+    const serverFile = path.join(evalDir, 'server.js');
+    fs.writeFileSync(serverFile, `
+export function parseResp(buffer) {
+  // TODO(scaffold): parse RESP bulk string and commands
+  throw new Error("TODO(scaffold): not implemented");
+}
+`, 'utf8');
+
+    // Verify guardrail rules explicitly instruct the agent on what to do
+    const guardrail = fs.readFileSync(GUARDRAILS_FILE, 'utf8');
+    assert.match(guardrail, /NEVER.*write.*replace.*TODO\(scaffold\)/);
+    assert.match(guardrail, /Progressive 3-Level Hinting/);
+    assert.match(guardrail, /Level 1 \(Conceptual Analogy\)/);
+    assert.match(guardrail, /Level 2 \(Control Flow & Pseudocode\)/);
+    assert.match(guardrail, /Level 3 \(Targeted API Pointer\)/);
+  });
+
+  test('Scenario 5: Learner requests /scaffold verify prematurely or out-of-order', () => {
+    run(process.execPath, [INIT_SCRIPT, '--track', 'redis']);
+
+    // Attempt premature verification of milestone 2 while milestone 1 is unchecked
+    const res = run(process.execPath, [VERIFY_SCRIPT, '--milestone', '2']);
+    assert.equal(res.status, 1);
+    assert.match(res.stderr, /Cannot verify Milestone 2/);
+    assert.match(res.stderr, /Milestone 1.*must be completed first/);
+    assert.match(res.stderr, /strictly sequential/);
+
+    // Progress file must remain at Milestone 1 active
+    const progress = fs.readFileSync(path.join(evalDir, 'PROGRESS.md'), 'utf8');
+    assert.match(progress, /-\s*\[ \]\s*\*\*Milestone 1\*\*:\s*▶/);
+    assert.doesNotMatch(progress, /-\s*\[x\]\s*\*\*Milestone 2\*\*/);
+  });
+
+  test('Scenario 6: Learner runs /scaffold quiz on a real git diff', () => {
+    // Initialize base commit
+    const appFile = path.join(evalDir, 'index.js');
+    fs.writeFileSync(appFile, 'console.log("initial");\n', 'utf8');
+    run('git', ['add', 'index.js']);
+    run('git', ['commit', '-m', 'chore: initial commit']);
+
+    // Make an uncommitted change
+    fs.writeFileSync(appFile, 'console.log("rate-limiter added");\n', 'utf8');
+
+    // Run git diff to ensure there is a real diff
+    const diffRes = run('git', ['diff']);
+    assert.match(diffRes.stdout, /\+console\.log\("rate-limiter added"\);/);
+
+    // Verify that SKILL.md defines the 3 defensibility questions for /scaffold quiz
+    const skill = fs.readFileSync(SKILL_FILE, 'utf8');
+    assert.match(skill, /\/scaffold quiz/);
+    assert.match(skill, /Intent.*What core problem does this/i);
+    assert.match(skill, /Mechanism.*Walk through the execution flow/i);
+    assert.match(skill, /Failure Mode.*Under what runtime scenario/i);
+  });
+});

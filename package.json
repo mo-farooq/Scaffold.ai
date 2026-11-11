@@ -7,7 +7,16 @@
   "bin": {
     "scaffold": "skills/scaffold/scripts/init-scaffold.mjs"
   },
+  "files": [
+    "skills/",
+    "rules/",
+    "tracks/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
+    "test": "node --test",
+    "check": "node --check skills/scaffold/scripts/init-scaffold.mjs && node --check skills/scaffold/scripts/verify-gate.mjs && node --check test/scaffold.test.mjs && node --check test/behavior-eval.test.mjs",
     "init": "node skills/scaffold/scripts/init-scaffold.mjs",
     "verify": "node skills/scaffold/scripts/verify-gate.mjs"
   },

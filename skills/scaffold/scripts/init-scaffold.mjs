@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * Scaffold Initialization Helper Script
- * Sets up PROGRESS.md and workspace state for Antigravity & skills.sh
+ * Sets up PROGRESS.md and workspace guardrails safely for Antigravity & skills.sh
  *
  * Usage:
- *   node skills/scaffold/scripts/init-scaffold.mjs --track redis
- *   node skills/scaffold/scripts/init-scaffold.mjs --idea "Build a rate-limited API in Node.js"
+ *   node skills/scaffold/scripts/init-scaffold.mjs --track redis [--force] [--hardcore]
+ *   node skills/scaffold/scripts/init-scaffold.mjs --idea "Build a rate-limited API in Node.js" [--force]
  */
 
 import fs from 'node:fs';
@@ -14,26 +14,69 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const REPO_ROOT = path.resolve(__dirname, '../../..');
+const SKILL_ROOT = path.resolve(__dirname, '..');
+const ASSETS_DIR = path.join(SKILL_ROOT, 'assets');
+const TRACKS_DIR = path.join(ASSETS_DIR, 'tracks');
+const RULES_SOURCE = path.join(ASSETS_DIR, 'rules/scaffold-guardrails.md');
+const TEMPLATE_PATH = path.join(ASSETS_DIR, 'PROGRESS.template.md');
+
+const VALID_TRACKS = ['redis', 'git', 'http', 'sqlite', 'docker'];
+const TRACK_FILE_MAP = {
+  redis: 'redis-from-scratch.md',
+  git: 'git-from-scratch.md',
+  http: 'http-server-from-scratch.md',
+  sqlite: 'sqlite-from-scratch.md',
+  docker: 'docker-from-scratch.md',
+};
 
 // Terminal colors
 const cyan = (s) => `\x1b[36m${s}\x1b[0m`;
 const green = (s) => `\x1b[32m${s}\x1b[0m`;
 const yellow = (s) => `\x1b[33m${s}\x1b[0m`;
+const red = (s) => `\x1b[31m${s}\x1b[0m`;
 const bold = (s) => `\x1b[1m${s}\x1b[0m`;
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const options = {};
+  const options = {
+    hardcore: false,
+    force: false,
+    track: null,
+    idea: null,
+  };
+
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--track' && args[i + 1]) {
+    const arg = args[i];
+    if (arg === '--track') {
+      if (i + 1 >= args.length) {
+        console.error(red('Error: --track requires a track name.'));
+        process.exit(1);
+      }
       options.track = args[++i].toLowerCase();
-    } else if (args[i] === '--idea' && args[i + 1]) {
-      options.idea = args[++i];
-    } else if (args[i] === '--help' || args[i] === '-h') {
-      options.help = true;
+    } else if (arg === '--idea') {
+      if (i + 1 >= args.length) {
+        console.error(red('Error: --idea requires a project description text.'));
+        process.exit(1);
+      }
+      const val = args[++i].trim();
+      if (!val) {
+        console.error(red('Error: Project idea description cannot be empty.'));
+        process.exit(1);
+      }
+      options.idea = val;
+    } else if (arg === '--hardcore') {
+      options.hardcore = true;
+    } else if (arg === '--force' || arg === '-f') {
+      options.force = true;
+    } else if (arg === '--help' || arg === '-h') {
+      showHelp();
+      process.exit(0);
+    } else {
+      console.error(red(`Error: Unrecognized option "${arg}". Run with --help for usage.`));
+      process.exit(1);
     }
   }
+
   return options;
 }
 
@@ -42,8 +85,15 @@ function showHelp() {
 ${bold(cyan('🏗️ Scaffold Initialization CLI'))}
 
 Usage:
-  npx scaffold init --track <track-name>
-  npx scaffold init --idea "<project idea>"
+  npx scaffold init --track <track-name> [--force] [--hardcore]
+  npx scaffold init --idea "<project idea>" [--force] [--hardcore]
+
+Options:
+  --track <name>    Start a curated system track (redis, git, http, sqlite, docker)
+  --idea "<text>"   Decompose a custom project idea into progressive milestones
+  --hardcore        Hardcore Mode: You write 100% of the code & boilerplate; agent writes zero code
+  --force, -f       Overwrite existing PROGRESS.md and update workspace guardrails
+  --help, -h        Show this help message
 
 Available Curated Tracks:
   • ${bold('redis')}   - Build a Redis Clone from Scratch (RESP & Key-Value Engine)
@@ -55,9 +105,24 @@ Available Curated Tracks:
 }
 
 function loadTrackMilestones(trackName) {
-  const trackFile = path.join(REPO_ROOT, 'tracks', `${trackName}-from-scratch.md`);
+  if (!VALID_TRACKS.includes(trackName)) {
+    console.error(red(
+      `Error: Unknown track "${trackName}".\n` +
+      `Available curated tracks: ${VALID_TRACKS.join(', ')}`
+    ));
+    process.exit(1);
+  }
+
+  const fileName = TRACK_FILE_MAP[trackName] || `${trackName}-from-scratch.md`;
+
+  // Try self-contained assets/tracks first, then fallback to cwd/tracks
+  let trackFile = path.join(TRACKS_DIR, fileName);
   if (!fs.existsSync(trackFile)) {
-    throw new Error(`Track "${trackName}" not found at ${trackFile}`);
+    trackFile = path.join(process.cwd(), 'tracks', fileName);
+  }
+  if (!fs.existsSync(trackFile)) {
+    console.error(red(`Error: Track file for "${trackName}" not found at ${trackFile}`));
+    process.exit(1);
   }
 
   const content = fs.readFileSync(trackFile, 'utf8');
@@ -75,6 +140,11 @@ function loadTrackMilestones(trackName) {
     });
   }
 
+  if (milestones.length === 0) {
+    console.error(red(`Error: No milestones found in track file: ${trackFile}`));
+    process.exit(1);
+  }
+
   return { title, milestones };
 }
 
@@ -90,11 +160,47 @@ function generateDefaultMilestones(idea) {
   };
 }
 
+function setupWorkspaceGuardrails(options) {
+  try {
+    const targetAgentsRulesDir = path.join(process.cwd(), '.agents/rules');
+    if (!fs.existsSync(targetAgentsRulesDir)) {
+      fs.mkdirSync(targetAgentsRulesDir, { recursive: true });
+    }
+    const targetRulePath = path.join(targetAgentsRulesDir, 'scaffold-guardrails.md');
+
+    if (fs.existsSync(targetRulePath) && !options.force) {
+      console.log(yellow('Preserving existing .agents/rules/scaffold-guardrails.md (use --force to overwrite).'));
+    } else if (fs.existsSync(RULES_SOURCE)) {
+      fs.copyFileSync(RULES_SOURCE, targetRulePath);
+    }
+
+    // Claude Code compatibility: check CLAUDE.md if present
+    const claudeMdPath = path.join(process.cwd(), 'CLAUDE.md');
+    if (fs.existsSync(claudeMdPath)) {
+      const claudeContent = fs.readFileSync(claudeMdPath, 'utf8');
+      const marker = '<!-- Scaffold Guardrails Active -->';
+      if (!claudeContent.includes(marker)) {
+        const notice = `\n\n${marker}\n> [!IMPORTANT]\n> When PROGRESS.md is present, enforce Scaffold Socratic guardrails (.agents/rules/scaffold-guardrails.md): never fill in TODO(scaffold) stubs for the learner. Provide 3-level progressive hints and enforce the 4-axis reflection gate.\n`;
+        fs.appendFileSync(claudeMdPath, notice, 'utf8');
+      }
+    }
+  } catch (err) {
+    // Non-fatal if permission denied in read-only environments
+  }
+}
+
 function main() {
   const options = parseArgs();
-  if (options.help) {
-    showHelp();
-    process.exit(0);
+
+  // Safety check: Refuse to overwrite existing PROGRESS.md without --force
+  const targetPath = path.join(process.cwd(), 'PROGRESS.md');
+  if (fs.existsSync(targetPath) && !options.force) {
+    console.error(red(
+      `Error: Existing PROGRESS.md found in ${process.cwd()}.\n` +
+      `Refusing to overwrite to prevent losing existing learning progress.\n` +
+      `Use --force if you intentionally wish to reset this workspace.`
+    ));
+    process.exit(1);
   }
 
   let projectData;
@@ -107,19 +213,17 @@ function main() {
     trackOrIdea = options.idea;
     projectData = generateDefaultMilestones(options.idea);
   } else {
-    // Default to redis track if nothing specified
     console.log(yellow('No track or idea specified. Defaulting to curated track: redis\n'));
     trackOrIdea = 'Track: redis';
     projectData = loadTrackMilestones('redis');
   }
 
-  const templatePath = path.join(REPO_ROOT, 'skills/scaffold/assets/PROGRESS.template.md');
-  if (!fs.existsSync(templatePath)) {
-    console.error(`Template not found at: ${templatePath}`);
+  if (!fs.existsSync(TEMPLATE_PATH)) {
+    console.error(red(`Error: Template not found at: ${TEMPLATE_PATH}`));
     process.exit(1);
   }
 
-  let template = fs.readFileSync(templatePath, 'utf8');
+  let template = fs.readFileSync(TEMPLATE_PATH, 'utf8');
 
   // Format milestones markdown checklist
   const milestonesList = projectData.milestones
@@ -129,12 +233,23 @@ function main() {
     })
     .join('\n');
 
+  // Format Concept Mastery Matrix
+  const masteryMatrix = projectData.milestones
+    .map((m) => `| M${m.number} | ${m.title} | 🔴 Unverified | Pending 4-Axis Diff Review |`)
+    .join('\n');
+
+  const executionMode = options.hardcore
+    ? 'Hardcore Mode (100% Student Code, 0% AI Code)'
+    : 'Mentor Mode (AI Boilerplate Glue + TODO(scaffold) Stubs)';
+
   const initialDecisions = `| 1 | *In Progress* | - | Initializing ${projectData.milestones[0].title} |`;
+  const initialAhaLog = `*Milestone reflections and key takeaways will be recorded here upon completing each gate.*`;
 
   // Fill in placeholders
   const filledProgress = template
     .replace(/\{\{PROJECT_TITLE\}\}/g, projectData.title)
     .replace(/\{\{TRACK_OR_IDEA\}\}/g, trackOrIdea)
+    .replace(/\{\{EXECUTION_MODE\}\}/g, executionMode)
     .replace(/\{\{CURRENT_MILESTONE_NUM\}\}/g, '1')
     .replace(/\{\{CURRENT_MILESTONE_TITLE\}\}/g, projectData.milestones[0].title)
     .replace(/\{\{PROGRESS_BAR\}\}/g, '░░░░░░░░░░░░░░░░░░░░')
@@ -142,21 +257,27 @@ function main() {
     .replace(/\{\{COMPLETED_COUNT\}\}/g, '0')
     .replace(/\{\{TOTAL_COUNT\}\}/g, String(projectData.milestones.length))
     .replace(/\{\{MASTERY_SCORE\}\}/g, '100')
+    .replace(/\{\{MASTERY_MATRIX\}\}/g, masteryMatrix)
     .replace(/\{\{MILESTONES_LIST\}\}/g, milestonesList)
-    .replace(/\{\{DECISIONS_LOG\}\}/g, initialDecisions);
+    .replace(/\{\{DECISIONS_LOG\}\}/g, initialDecisions)
+    .replace(/\{\{AHA_MOMENTS_LOG\}\}/g, initialAhaLog);
 
   // Write PROGRESS.md to current working directory
-  const targetPath = path.join(process.cwd(), 'PROGRESS.md');
   fs.writeFileSync(targetPath, filledProgress, 'utf8');
+
+  // Set up workspace guardrails in .agents/rules/
+  setupWorkspaceGuardrails(options);
 
   console.log(`
 ${green('✅ Scaffold initialized successfully!')}
 File created: ${bold(cyan(targetPath))}
+Mode:         ${bold(yellow(executionMode))}
 
 ${bold('👉 NEXT STEPS:')}
 1. Open ${bold('PROGRESS.md')} in your editor's right split (${cyan('Cmd+Shift+V')} or ${cyan('Ctrl+Shift+V')}).
-2. Ask your agent: ${yellow('"What is our architectural goal for Milestone 1?"')}
-3. Build with Socratic guidance! When finished, run ${cyan('/scaffold verify')}.
+2. ${yellow('Snooze AI ghost-text')} so inline auto-complete doesn't spoil the learning loop!
+3. Ask your agent: ${yellow('"What is our architectural goal for Milestone 1?"')}
+4. When finished with Milestone 1, run ${cyan('/scaffold verify')}.
 `);
 }
 

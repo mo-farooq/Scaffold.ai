@@ -1,1 +1,1 @@
-../../rules/scaffold-guardrails.md
+../../skills/scaffold/assets/rules/scaffold-guardrails.md
