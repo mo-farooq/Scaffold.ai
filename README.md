@@ -137,6 +137,29 @@ system they want to explore.
 | [🗄️ Mini SQLite](skills/scaffold/assets/tracks/sqlite-from-scratch.md) | Embedded relational database | Pages, serialization, B-trees, SQL |
 | [🐳 Container Runtime](skills/scaffold/assets/tracks/docker-from-scratch.md) | Lightweight process isolation runtime | Namespaces, cgroups, OverlayFS |
 
+## 🌿 Worktree & Branch Management
+
+Scaffold includes built-in git worktree management to keep feature development isolated in `.worktrees/`:
+
+```bash
+# List all active worktrees and status
+npm run worktree:list
+
+# Create an isolated worktree and branch
+npm run worktree:add my-feature
+
+# Remove a worktree safely after merging
+npm run worktree:remove my-feature
+```
+
+## 🛡️ Branch Protection & CI
+
+To maintain stability across collaborative and agentic development:
+
+- **GitHub Branch Protection:** Direct pushes and force pushes to `main` are disabled on GitHub. All merges must go through Pull Requests.
+- **Continuous Integration:** GitHub Actions (`.github/workflows/ci.yml`) runs syntax and unit tests on Node 18, 20, and 22 across all PRs.
+- **Local Pre-Commit & Pre-Push Hooks:** Automated git hooks in `.githooks/` prevent accidental direct commits or pushes to `main` locally, and run `npm run check` automatically before commits. (Run `npm run prepare` to configure).
+
 ## 🔌 Compatibility
 
 Scaffold is distributed as one canonical `skills/scaffold/` skill package. See the
