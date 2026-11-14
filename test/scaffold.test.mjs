@@ -186,6 +186,14 @@ describe('init-scaffold.mjs', () => {
     const badFlag = runScript(INIT_SCRIPT, ['--unrecognized-flag']);
     assert.equal(badFlag.status, 1);
   });
+
+  test('rejects running without --idea or --track with clear usage guidance', () => {
+    const res = runScript(INIT_SCRIPT, []);
+    assert.equal(res.status, 1);
+    assert.match(res.stderr, /Please specify what you want to build or learn/);
+    assert.match(res.stderr, /npx scaffold init --idea/);
+    assert.match(res.stderr, /npx scaffold init --track/);
+  });
 });
 
 describe('verify-gate.mjs', () => {

@@ -29,6 +29,10 @@ When the user starts a Scaffold session:
      ```bash
      node skills/scaffold/scripts/init-scaffold.mjs --idea "<project idea>"
      ```
+   - For tailored milestones, pass pipe-separated titles with `--milestones`:
+     ```bash
+     node skills/scaffold/scripts/init-scaffold.mjs --idea "CLI Task Manager in Go" --milestones "CLI Flags & Models|Task State Transitions|JSON Persistence"
+     ```
    - For ready-made systems challenges, use `--track <redis|git|http|sqlite|docker>`.
    - Add `--hardcore` when the learner wants to write 100% of the code including boilerplate.
    - Never use `--force` without explaining that it resets the existing `PROGRESS.md` session.

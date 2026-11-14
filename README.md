@@ -39,6 +39,19 @@ Scaffold will:
 4. Create explicit `TODO(scaffold)` stubs in Mentor Mode.
 5. Give you one small next action and a Level 1 progressive hint path.
 
+## 💡 Learn Any Language or Stack
+
+Scaffold is language-agnostic. Bring whatever you want to learn:
+
+| Language / Goal | Example Scaffold Prompt | What You Own |
+| :--- | :--- | :--- |
+| **Go** | `/scaffold "Learn Go concurrency with a worker pool"` | Mutex locks, channels, and worker dispatching |
+| **Python** | `/scaffold "Build an async task queue in Python"` | Task serialization, retry loops, and event loops |
+| **TypeScript** | `/scaffold "Learn state management with an event ledger"` | In-memory event reducer and state validation |
+| **Rust** | `/scaffold "Learn Rust ownership with a mini key-value store"` | Hash map indexing, buffer parsing, and file sync |
+
+Scaffold configures the project harness, test runners, and entry points, then hands you the keyboard with focused `TODO(scaffold)` blocks and a progressive hint system when you get stuck.
+
 ## 🧭 What a Session Feels Like
 
 The agent starts with the active milestone—not a passive code dump:

@@ -237,12 +237,15 @@ function main() {
     trackOrIdea = options.idea;
     projectData = generateMilestonesFromIdea(options.idea, options.milestones);
   } else {
-    console.log(yellow(
-      'Tip: You can start any custom project with: npx scaffold init --idea "<what you want to learn>"\n' +
-      'Defaulting to curated playground: redis\n'
+    console.error(red(
+      'Error: Please specify what you want to build or learn.\n\n' +
+      'To learn with a custom project:\n' +
+      `  ${cyan('npx scaffold init --idea "<what you want to learn/build>"')}\n\n` +
+      'To start a curated practice playground:\n' +
+      `  ${cyan('npx scaffold init --track <redis|git|http|sqlite|docker>')}\n\n` +
+      'Run with --help for full usage.'
     ));
-    trackOrIdea = 'Track: redis';
-    projectData = loadTrackMilestones('redis');
+    process.exit(1);
   }
 
   if (!fs.existsSync(TEMPLATE_PATH)) {
