@@ -9,15 +9,21 @@
   },
   "files": [
     "skills/",
+    "scripts/",
     "docs/compatibility.md",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "test": "node --test",
-    "check": "node --check skills/scaffold/scripts/init-scaffold.mjs && node --check skills/scaffold/scripts/verify-gate.mjs && node --check test/scaffold.test.mjs && node --check test/behavior-eval.test.mjs",
+    "check": "node --check skills/scaffold/scripts/init-scaffold.mjs && node --check skills/scaffold/scripts/verify-gate.mjs && node --check scripts/worktree.mjs && node --check test/scaffold.test.mjs && node --check test/behavior-eval.test.mjs && node --check test/worktree.test.mjs",
     "init": "node skills/scaffold/scripts/init-scaffold.mjs",
-    "verify": "node skills/scaffold/scripts/verify-gate.mjs"
+    "verify": "node skills/scaffold/scripts/verify-gate.mjs",
+    "worktree": "node scripts/worktree.mjs",
+    "worktree:add": "node scripts/worktree.mjs add",
+    "worktree:list": "node scripts/worktree.mjs list",
+    "worktree:remove": "node scripts/worktree.mjs remove",
+    "prepare": "git config core.hooksPath .githooks || true"
   },
   "keywords": [
     "antigravity",
