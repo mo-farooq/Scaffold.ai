@@ -154,7 +154,7 @@ export function parseResp(buffer) {
     assert.match(skill, /Failure Mode.*Under what runtime scenario/i);
   });
 
-  test('Scenario 7: Redis is documented as the flagship first journey', () => {
+  test('Scenario 7: Learn-to-code positioning and curated practice playgrounds', () => {
     const readme = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
     const redisTrack = fs.readFileSync(
       path.join(REPO_ROOT, 'skills/scaffold/assets/tracks/redis-from-scratch.md'),
@@ -165,7 +165,7 @@ export function parseResp(buffer) {
       'utf8'
     );
 
-    assert.match(readme, /Redis is the recommended first track/);
+    assert.match(readme, /Curated Practice Playgrounds/);
     assert.match(readme, /Build real software with AI while becoming capable of explaining/);
     assert.match(redisTrack, /## First Observable Win/);
     assert.match(redisTrack, /\*\*Observable outcome\*\*/);

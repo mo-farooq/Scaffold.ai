@@ -1,4 +1,4 @@
-# 🏗️ Scaffold.ai — Build Software You Can Explain
+# 🏗️ Scaffold.ai — Learn to Code with AI
 
 [![skills.sh](https://img.shields.io/badge/skills.sh-scaffold-blue?style=for-the-badge&logo=anthropic)](https://skills.sh)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
@@ -6,46 +6,48 @@
 
 > Build real software with AI while becoming capable of explaining every important decision.
 
-Scaffold.ai is a Socratic engineering skill for intermediate developers. It turns a coding
-agent into a learning partner: the agent handles repetitive project glue, while the learner
-owns the core algorithms, trade-offs, and explanations.
+Scaffold.ai is the anti-vibe-coding Socratic mentor for anyone learning to code or building
+software with modern AI agents. Instead of letting the agent write all the code—robbing you
+of deep understanding and problem-solving skills—Scaffold turns your agent into an active learning
+partner: the agent handles repetitive project glue and boilerplate, while you own the core
+algorithms, trade-offs, and explanations.
 
-“Anti-vibe-coding” is the category. The practical outcome is confidence and ownership.
+Whether you are learning a new language, building your first fullstack app, or exploring low-level
+systems, Scaffold ensures you stay in the driver's seat and master how to code.
 
 ## ⚡ Start in Five Minutes
 
-Install the skill into a project with the universal skills CLI:
+Install the skill into your project with the universal skills CLI:
 
 ```bash
 npx skills add mo-farooq/scaffold
 ```
 
-Then ask your agent:
+Then tell your agent what you want to learn or build:
 
 ```text
-/scaffold track redis
+/scaffold "I want to learn Go by building a CLI task manager"
 ```
+
+*(Or simply ask `/scaffold` and let your agent help you design a learning project tailored to your level.)*
 
 Scaffold will:
 
-1. Initialize a `PROGRESS.md` learning dashboard.
-2. Recommend the first architectural goal.
+1. Initialize a `PROGRESS.md` learning dashboard tailored to your goal.
+2. Decompose the project into sequential, bite-sized milestones.
 3. Separate agent-owned setup from learner-owned core logic.
 4. Create explicit `TODO(scaffold)` stubs in Mentor Mode.
-5. Give you one small next action and a Level 1 hint path.
+5. Give you one small next action and a Level 1 progressive hint path.
 
-Redis is the recommended first track because it produces a visible result quickly while
-teaching TCP, protocols, state, expiration, and persistence.
+## 🧭 What a Session Feels Like
 
-## 🧭 What the First Session Feels Like
-
-The agent starts with the active milestone—not a wall of curriculum:
+The agent starts with the active milestone—not a passive code dump:
 
 ```text
-Architectural goal: turn a TCP byte stream into a command loop.
-You own: the RESP framing logic inside TODO(scaffold).
-I own: project wiring, configuration, and the test harness.
-Your next action: identify how a fragmented command is buffered.
+Architectural goal: parse and persist structured tasks with validation.
+You own: the core state transition and serialization logic inside TODO(scaffold).
+I own: CLI argument parsing, environment setup, and the test harness.
+Your next action: implement the task validation state machine.
 Need help? Ask for a Level 1 analogy and guiding question.
 ```
 
@@ -124,12 +126,16 @@ The deterministic scripts guarantee:
 The guardrails and Socratic behavior are model-dependent instructions. They are not an
 operating-system sandbox, so Scaffold describes that boundary honestly.
 
-## 🗺️ Curated Tracks
+## 🗺️ Curated Practice Playgrounds
 
-Start with Redis. The other tracks remain available for learners who already know which
-system they want to explore.
+Looking for ready-made challenges? Scaffold includes curated systems playgrounds that guide
+you through building foundational systems from raw primitives:
 
-| Track | What You Build | Core Concepts |
+```text
+/scaffold track redis
+```
+
+| Playground | What You Build | Core Concepts |
 | :--- | :--- | :--- |
 | [⚡ Redis Clone](skills/scaffold/assets/tracks/redis-from-scratch.md) | In-memory database speaking RESP | TCP, parsing, state, TTL, AOF |
 | [🌳 Git from Scratch](skills/scaffold/assets/tracks/git-from-scratch.md) | Content-addressable version control | Hashes, zlib, Merkle trees, commit DAGs |

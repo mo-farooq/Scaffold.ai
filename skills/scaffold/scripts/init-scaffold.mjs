@@ -43,6 +43,7 @@ function parseArgs() {
     force: false,
     track: null,
     idea: null,
+    milestones: null,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -67,6 +68,14 @@ function parseArgs() {
         process.exit(1);
       }
       options.idea = val;
+    } else if (arg === '--milestones') {
+      if (i + 1 >= args.length) {
+        console.error(red('Error: --milestones requires a delimited list (e.g. "M1|M2|M3").'));
+        process.exit(1);
+      }
+      const raw = args[++i].trim();
+      const delimiter = raw.includes('|') ? '|' : (raw.includes(',') ? ',' : ';');
+      options.milestones = raw.split(delimiter).map(s => s.trim()).filter(Boolean);
     } else if (arg === '--hardcore') {
       options.hardcore = true;
     } else if (arg === '--force' || arg === '-f') {
@@ -85,20 +94,21 @@ function parseArgs() {
 
 function showHelp() {
   console.log(`
-${bold(cyan('🏗️ Scaffold Initialization CLI'))}
+${bold(cyan('🏗️ Scaffold Initialization CLI — Learn to Code with AI'))}
 
 Usage:
-  npx scaffold init --track <track-name> [--force] [--hardcore]
-  npx scaffold init --idea "<project idea>" [--force] [--hardcore]
+  npx scaffold init --idea "<project idea>" [--milestones "<m1|m2|...>"] [--hardcore]
+  npx scaffold init --track <track-name> [--hardcore]
 
 Options:
-  --track <name>    Start a curated system track (redis, git, http, sqlite, docker)
-  --idea "<text>"   Decompose a custom project idea into progressive milestones
-  --hardcore        Hardcore Mode: You write 100% of the code & boilerplate; agent writes zero code
-  --force, -f       Overwrite existing PROGRESS.md and update workspace guardrails
-  --help, -h        Show this help message
+  --idea "<text>"         Decompose your custom learning goal or project into milestones (Recommended)
+  --milestones "<list>"   Optional pipe-separated milestone titles for custom ideas (e.g. "M1|M2|M3")
+  --track <name>          Start a curated systems playground (redis, git, http, sqlite, docker)
+  --hardcore              Hardcore Mode: You write 100% of the code; agent provides hints & review
+  --force, -f             Overwrite existing PROGRESS.md and update workspace guardrails
+  --help, -h              Show this help message
 
-Available Curated Tracks:
+Curated Practice Playgrounds:
   • ${bold('redis')}   - Build a Redis Clone from Scratch (RESP & Key-Value Engine)
   • ${bold('git')}     - Build Git from Scratch (Content-Addressable Object Store & DAG)
   • ${bold('http')}    - Build an HTTP/1.1 Server from Raw Sockets (RFC 7230)
@@ -151,7 +161,16 @@ function loadTrackMilestones(trackName) {
   return { title, milestones };
 }
 
-function generateDefaultMilestones(idea) {
+function generateMilestonesFromIdea(idea, customMilestones) {
+  if (customMilestones && customMilestones.length > 0) {
+    return {
+      title: idea,
+      milestones: customMilestones.map((title, idx) => ({
+        number: idx + 1,
+        title: title.trim(),
+      })),
+    };
+  }
   return {
     title: idea,
     milestones: [
@@ -216,9 +235,12 @@ function main() {
     projectData = loadTrackMilestones(options.track);
   } else if (options.idea) {
     trackOrIdea = options.idea;
-    projectData = generateDefaultMilestones(options.idea);
+    projectData = generateMilestonesFromIdea(options.idea, options.milestones);
   } else {
-    console.log(yellow('No track or idea specified. Defaulting to curated track: redis\n'));
+    console.log(yellow(
+      'Tip: You can start any custom project with: npx scaffold init --idea "<what you want to learn>"\n' +
+      'Defaulting to curated playground: redis\n'
+    ));
     trackOrIdea = 'Track: redis';
     projectData = loadTrackMilestones('redis');
   }
