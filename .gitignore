@@ -17,3 +17,7 @@ PROGRESS.md
 .venv/
 __pycache__/
 *.pyc
+
+# Local git worktrees
+.worktrees/
+

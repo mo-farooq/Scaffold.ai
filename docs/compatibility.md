@@ -18,7 +18,7 @@ A surface may be labeled **fully supported** only after a maintainer completes t
 a clean repository:
 
 1. Install or copy the canonical skill.
-2. Start `/scaffold track redis`.
+2. Start with a custom idea (e.g. `/scaffold "Build a rate-limited API in Node"`) or a curated track (e.g. `/scaffold track redis`).
 3. Confirm the first-session briefing names the active milestone, ownership boundary, and
    next action.
 4. Confirm `PROGRESS.md` and the workspace rule are available.

@@ -70,6 +70,20 @@ describe('init-scaffold.mjs', () => {
     assert.match(progress, /Milestone 4.*Persistence/);
   });
 
+  test('initializes custom ideas with explicit custom milestones', () => {
+    const idea = 'Learn Python with a CLI task manager';
+    const milestones = 'CLI flags & models|Task state transitions|JSON persistence';
+    const res = runScript(INIT_SCRIPT, ['--idea', idea, '--milestones', milestones]);
+    assert.equal(res.status, 0, res.stderr);
+
+    const progress = fs.readFileSync(path.join(tempDir, 'PROGRESS.md'), 'utf8');
+    assert.match(progress, /Learn Python with a CLI task manager/);
+    assert.match(progress, /Milestone 1.*CLI flags & models/);
+    assert.match(progress, /Milestone 2.*Task state transitions/);
+    assert.match(progress, /Milestone 3.*JSON persistence/);
+    assert.doesNotMatch(progress, /Milestone 4/);
+  });
+
   test('supports --hardcore mode flag', () => {
     const res = runScript(INIT_SCRIPT, ['--track', 'redis', '--hardcore']);
     assert.equal(res.status, 0, res.stderr);
@@ -171,6 +185,14 @@ describe('init-scaffold.mjs', () => {
 
     const badFlag = runScript(INIT_SCRIPT, ['--unrecognized-flag']);
     assert.equal(badFlag.status, 1);
+  });
+
+  test('rejects running without --idea or --track with clear usage guidance', () => {
+    const res = runScript(INIT_SCRIPT, []);
+    assert.equal(res.status, 1);
+    assert.match(res.stderr, /Please specify what you want to build or learn/);
+    assert.match(res.stderr, /npx scaffold init --idea/);
+    assert.match(res.stderr, /npx scaffold init --track/);
   });
 });
 
