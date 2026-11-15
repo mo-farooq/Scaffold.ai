@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Git Pre-Push Hook: Prevent direct push to main
+
+set -e
+
+remote="$1"
+url="$2"
+
+while read -r local_ref local_oid remote_ref remote_oid; do
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    if [ "$ALLOW_MAIN_PUSH" != "1" ]; then
+      echo ""
+      echo "🛑 Branch Protection: Direct push to 'main' is blocked."
+      echo "--------------------------------------------------------"
+      echo "Please push your feature branch and open a Pull Request."
+      echo "To bypass in an emergency, use: ALLOW_MAIN_PUSH=1 git push ..."
+      echo ""
+      exit 1
+    fi
+  fi
+done
+
+exit 0
